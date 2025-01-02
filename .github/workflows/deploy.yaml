@@ -1,32 +1,45 @@
-name: Deploy Vue App to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main # Trigger on push to 'main' branch
+      - main # Trigger on pushes to the 'main' branch
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # Run on the latest Ubuntu environment
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the repository
+      # Checkout vue-portfolio-public repository
+      - name: Checkout vue-portfolio-public
         uses: actions/checkout@v2
 
+      # Set up Node.js for the build process
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14" # Specify your Node.js version
+          node-version: "16"
 
+      # Install dependencies for vue-portfolio (fetch from vue-portfolio)
       - name: Install dependencies
-        run: npm install # Install dependencies using npm
+        run: npm install
 
+      # Build the project in vue-portfolio to generate the dist folder
       - name: Build the project
-        run: npm run build # Run the build command to prepare production files
+        run: npm run build
+        working-directory: ./vue-portfolio # Change working directory to vue-portfolio to run build
 
+      # Checkout vue-portfolio repository to fetch the dist folder
+      - name: Checkout vue-portfolio repo
+        uses: actions/checkout@v2
+        with:
+          repository: your-username/vue-portfolio # Replace with the correct username/repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
-          branch: gh-pages # The branch to deploy to (ensure 'gh-pages' exists)
-          folder: dist # The folder to deploy (built files are in 'dist')
-          token: ${{ secrets.GITHUB_TOKEN }} # Automatically use GitHub token for authentication
+          branch: gh-pages # Deploy to the gh-pages branch
+          folder: vue-portfolio/dist # Deploy from the dist folder in vue-portfolio
+          token: ${{ secrets.GITHUB_TOKEN }}
