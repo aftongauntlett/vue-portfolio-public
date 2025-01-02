@@ -3,14 +3,17 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Trigger on pushes to the 'main' branch
+      - main # Trigger when changes are pushed directly to 'main'
+  pull_request:
+    branches:
+      - main # Trigger when a pull request is merged into 'main'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout vue-portfolio-public repository
+      # Checkout the vue-portfolio-public repository
       - name: Checkout vue-portfolio-public
         uses: actions/checkout@v2
 
@@ -29,11 +32,11 @@ jobs:
         run: npm run build
         working-directory: ./vue-portfolio # Change working directory to vue-portfolio to run build
 
-      # Checkout vue-portfolio repository to fetch the dist folder
+      # Checkout the vue-portfolio repository to fetch the dist folder
       - name: Checkout vue-portfolio repo
         uses: actions/checkout@v2
         with:
-          repository: your-username/vue-portfolio # Replace with the correct username/repo
+          repository: aftongauntlett/vue-portfolio
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # Deploy to GitHub Pages
